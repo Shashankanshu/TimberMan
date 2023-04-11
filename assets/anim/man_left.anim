@@ -1,0 +1,37 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "mancutting",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.375,
+  "sample": 8,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "dbd695a0-fb79-4985-9814-a86b2f22b605"
+            }
+          },
+          {
+            "frame": 0.125,
+            "value": {
+              "__uuid__": "ca043f57-6b93-4325-9db9-62f404632caf"
+            }
+          },
+          {
+            "frame": 0.25,
+            "value": {
+              "__uuid__": "dbd695a0-fb79-4985-9814-a86b2f22b605"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "events": []
+}
