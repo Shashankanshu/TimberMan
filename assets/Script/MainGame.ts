@@ -1,4 +1,4 @@
-import Man from "./Man";
+import TimberMan from "./TimberMan";
 import Tree from "./Tree";
 
 const { ccclass, property } = cc._decorator;
@@ -17,12 +17,13 @@ export default class MainGame extends cc.Component {
 
     @property(cc.Node)
     score_board: cc.Node = null;
+    gameEnded = false;
 
-    ////
-    isLeft = false;
+    start() {
 
-
-    onLoad() {
+        this.node.on(cc.Node.EventType.TOUCH_END, (event) => {
+            event.touch.getLocationX() > cc.winSize.width / 2 ? this.rightClick() : this.leftClick();
+        });
 
         this.generateTree();
     }
@@ -32,37 +33,10 @@ export default class MainGame extends cc.Component {
     }
 
     rightClick() {
-        if (this.isLeft) {
-            this.moveRight();
-        } else {
-            this.man.getComponent(Man).cutTree();
-        }
+        this.man.getComponent(TimberMan).onRightClick();
     }
 
     leftClick() {
-        if (!this.isLeft) {
-            this.moveLeft();
-        } else {
-            this.man.getComponent(Man).cutTree();
-        }
-    }
-
-    moveLeft() {
-        this.man.getComponent(Man).moveLeft();
-        this.cut();
-    }
-
-    moveRight() {
-        this.man.getComponent(Man).moveRight();
-        this.cut();
-    }
-
-    cut() {
-        cc.tween(this.node)
-            .delay(0.1)
-            .call(() => {
-                this.man.getComponent(Man).cutTree();
-            })
-            .start();
+        this.man.getComponent(TimberMan).onLeftClick();
     }
 }
