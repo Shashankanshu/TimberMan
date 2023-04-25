@@ -96,8 +96,7 @@ export default class Tree extends cc.Component {
 
         let timberMan = this.man.getComponent(TimberMan);
         let timberManPos = this.node.parent.convertToWorldSpaceAR(timberMan.node.position);
-        console.log(timberMan.manSize.y * timberMan.manScaleY + timberManPos.y, 'man');
-
+        // console.log(timberMan.manSize.y * timberMan.manScaleY + timberManPos.y, 'man');
 
         for (let index = 0; index < this.trunkArr.length; index++) {
             const trunk = this.trunkArr[index];
@@ -105,8 +104,7 @@ export default class Tree extends cc.Component {
 
                 let hitpos = trunk.hitbox.convertToWorldSpaceAR(trunk.hitbox.position);
                 // let hitpos = this.node.parent.convertToNodeSpaceAR(this.node.convertToWorldSpaceAR(trunk.hitbox.position));
-
-                console.log(hitpos.x, hitpos.y, 'trunk');
+                // console.log(hitpos.x, hitpos.y, 'trunk');
 
                 if ((hitpos.y < timberMan.manSize.y * timberMan.manScaleY + timberManPos.y)
                     && (trunk.isLeft === timberMan.isLeft)) {
@@ -114,6 +112,7 @@ export default class Tree extends cc.Component {
                     this.node.parent.getComponent(MainGame).gameEnded = true;
                     timberMan.rip();
                     console.log('GameOver');
+                    break;
                 }
             }
         }
