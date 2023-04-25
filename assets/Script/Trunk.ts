@@ -23,11 +23,16 @@ export default class Trunk extends cc.Component {
     anchor_offset = 0.21;
     isLeft = false;
 
+    onLoad() {
+        this.hitbox.removeComponent(cc.Sprite);
+    }
+
     create_left() {
         this.node.anchorX = 1 - this.anchor_offset;
         this.node.getComponent(cc.Sprite).spriteFrame = this.trunk_left;
         this.hitbox.active = true;
         this.hitbox.setPosition(-this.hitbox_offset.x, this.hitbox_offset.y);
+        this.isLeft = true;
     }
 
     create_right() {
@@ -35,12 +40,14 @@ export default class Trunk extends cc.Component {
         this.node.getComponent(cc.Sprite).spriteFrame = this.trunk_right;
         this.hitbox.active = true;
         this.hitbox.setPosition(this.hitbox_offset.x, this.hitbox_offset.y);
+        this.isLeft = false;
     }
 
     create_mid() {
         this.node.anchorX = 0.5;
         this.node.getComponent(cc.Sprite).spriteFrame = this.trunk;
         this.hitbox.active = false;
+        this.isLeft = false;
     }
 
     cut(fly_left: boolean, callback: Function) {

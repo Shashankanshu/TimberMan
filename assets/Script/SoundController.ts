@@ -16,6 +16,16 @@ export default class SoundController extends cc.Component {
     isSoundOn: boolean = true;
     AudioClips = cc.Enum({})
 
+    public static instance: SoundController = null;
+
+    onLoad() {
+        if (SoundController.instance) {
+            console.error("Too many Sound Managers");
+            return;
+        }
+        SoundController.instance = this;
+    }
+
     public isSoundPlaying(ID: number) {
         var state = cc.audioEngine.getState(ID);
         if (state == cc.audioEngine.AudioState.PLAYING) {
@@ -52,6 +62,14 @@ export default class SoundController extends cc.Component {
         return id;
     }
 
+    public playMusic(musicClip: cc.AudioClip, volume?: number) {
+        this.stopMusic();
+        if (!this.isSoundOn) return;
+        cc.audioEngine.playMusic(musicClip, true);
+        if (volume && volume >= 0 && volume <= 1)
+            cc.audioEngine.setMusicVolume(volume);
+    }
+
     public playSound(audioEnum: number, volume?: number, loop?: boolean) {
         if (!volume || volume > 1) volume = 1;
         if (volume < 0) volume = 0;
@@ -60,6 +78,24 @@ export default class SoundController extends cc.Component {
             clip = this.randomArr(this[this.enumToString(this.AudioClips, audioEnum)])
         }
         return this._playSFX(clip, volume, loop)
+    }
+
+    private playSoundWithClip(soundClip: cc.AudioClip, volume?: number, loop?: boolean) {
+        if (!volume || volume > 1) volume = 1;
+        if (volume < 0) volume = 0;
+        return this._playSFX(soundClip, volume, loop);
+    }
+
+    public playBGMMain() {
+        this.playMusic(this.bgmMain, 0.5);
+    }
+
+    playCutTree() {
+        this.playSoundWithClip(this.axe);
+    }
+
+    playTimberRip() {
+        this.playSoundWithClip(this.die);
     }
 
     public stopSound(audioId) {

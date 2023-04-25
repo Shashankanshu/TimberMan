@@ -1,4 +1,5 @@
 import MainGame from "./MainGame";
+import TimberMan from "./TimberMan";
 import Trunk from "./Trunk";
 
 const { ccclass, property } = cc._decorator;
@@ -9,11 +10,14 @@ export default class Tree extends cc.Component {
     @property(cc.Prefab)
     trunk: cc.Prefab = null;
 
-    man: cc.Node;
+    @property(cc.Node)
+    man: cc.Node = null;
 
     trunkHeight = 103;
     minLength = 8;
     trunkArr: Trunk[] = [];
+
+    lastDir = 1;
 
     generate() {
         this.node.removeAllChildren();
@@ -32,6 +36,11 @@ export default class Tree extends cc.Component {
         }
 
         let dir = this.getRandDir();
+        if (this.lastDir == 1 || this.lastDir == 2)
+            dir = 3;
+
+        this.lastDir = dir;
+
         let trunk = cc.instantiate(this.trunk).getComponent(Trunk);
 
         if (dir == 1 && !mid_branch) {
@@ -65,39 +74,47 @@ export default class Tree extends cc.Component {
         if (this.trunkArr.length < this.minLength) {
             this.createBranch();
         }
+        let callbackCount = 0;
         for (let index = 0; index < this.trunkArr.length; index++) {
             const trunk = this.trunkArr[index];
             cc.tween(trunk.node)
                 .by(0.1, { position: cc.v3(0, -this.trunkHeight, 0) })
+                .call(() => {
+                    ++callbackCount;
+                    if (callbackCount >= this.trunkArr.length) {
+                        this.checkCollision();
+                    }
+                })
                 .start();
         }
-        this.checkCollision();
     }
 
     checkCollision() {
+
         if (this.node.parent.getComponent(MainGame).gameEnded)
             return;
 
+        let timberMan = this.man.getComponent(TimberMan);
+        let timberManPos = this.node.parent.convertToWorldSpaceAR(timberMan.node.position);
+        console.log(timberMan.manSize.y * timberMan.manScaleY + timberManPos.y, 'man');
+
+
         for (let index = 0; index < this.trunkArr.length; index++) {
             const trunk = this.trunkArr[index];
-            let hitbox = trunk.hitbox.getContentSize();
-            let hitpos = trunk.hitbox.convertToWorldSpaceAR(trunk.hitbox.position);
+            if (trunk.hitbox.active) {
 
-            let manSize = this.man.getContentSize();
-            let manpos = this.man.convertToWorldSpaceAR(this.man.position);
+                let hitpos = trunk.hitbox.convertToWorldSpaceAR(trunk.hitbox.position);
+                // let hitpos = this.node.parent.convertToNodeSpaceAR(this.node.convertToWorldSpaceAR(trunk.hitbox.position));
 
-            if (cc.Intersection.rectRect(cc.rect(hitpos.x, hitpos.y, hitbox.width, hitbox.height),
-                cc.rect(manpos.x, manpos.y, manSize.width, manSize.height))) {
+                console.log(hitpos.x, hitpos.y, 'trunk');
 
-                // if (cc.Intersection.rectRect(cc.rect(trunk.hitbox.x, trunk.hitbox.y, hitbox.width, hitbox.height),
-                //     cc.rect(this.man.x, this.man.y, manSize.width, manSize.height))) {
+                if ((hitpos.y < timberMan.manSize.y * timberMan.manScaleY + timberManPos.y)
+                    && (trunk.isLeft === timberMan.isLeft)) {
 
-
-                this.node.parent.getComponent(MainGame).gameEnded = true;
-                // this.man.getComponent(Man).rip();
-                console.log('GameOver');
-
-                break;
+                    this.node.parent.getComponent(MainGame).gameEnded = true;
+                    timberMan.rip();
+                    console.log('GameOver');
+                }
             }
         }
     }

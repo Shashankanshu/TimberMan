@@ -1,3 +1,4 @@
+import SoundController from "./SoundController";
 import Tree from "./Tree";
 
 const { ccclass, property } = cc._decorator;
@@ -5,79 +6,67 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class TimberMan extends cc.Component {
 
-    activeMan: cc.Node;
     isLeft = false;
 
     @property(cc.Node)
     tree: cc.Node = null;
 
-    onLoad() {
+    @property(cc.Node)
+    ripStone: cc.Node = null;
 
-        this.node.getChildByName('left').active = false;
-        this.node.getChildByName('left').getChildByName('rip').active = false;
+    manSize = cc.v2(78, 118);
+    manScaleY = 1.5;
 
-        this.node.getChildByName('right').active = false;
-        this.node.getChildByName('right').getChildByName('rip').active = false;
-
-        this.moveLeft();
-        this.updateManOnTree();
+    private man_posi = {
+        left: -150,
+        right: 150
     }
 
-    updateManOnTree() {
-        this.tree.getComponent(Tree).man = this.activeMan.getChildByName('man');
+    onLoad() {
+        this.moveLeft();
     }
 
     cutTree() {
-        let animName = this.isLeft ? 'man_left' : 'man_right';
-        let animation = this.activeMan.getChildByName('man').getComponent(cc.Animation);
+        let animName = "man_left";
+        let animation = this.getComponent(cc.Animation);
         animation.playAdditive(animName);
         this.tree.getComponent(Tree).cut(!this.isLeft);
+        SoundController.instance.playCutTree();
     }
 
     moveLeft() {
-        this.activeMan = this.node.getChildByName('left');
-        this.activeMan.active = true;
-        this.activeMan.getChildByName('rip').active = false;
-
+        this.ripStone.active = false;
         this.isLeft = true;
 
-        this.node.getChildByName('right').active = false;
-        this.updateManOnTree();
+        this.node.setPosition(this.man_posi.left, this.node.y, this.node.z);
+        this.node.scaleX = Math.abs(this.node.scaleX);
 
-        let animation = this.activeMan.getChildByName('man').getComponent(cc.Animation);
+        let animation = this.getComponent(cc.Animation);
         animation.play('idle');
+
     }
 
     moveRight() {
-        this.activeMan = this.node.getChildByName('right');
-        this.activeMan.active = true;
-        this.activeMan.getChildByName('rip').active = false;
-
+        this.ripStone.active = false;
         this.isLeft = false;
-        this.node.getChildByName('left').active = false;
-        this.updateManOnTree();
 
-        let animation = this.activeMan.getChildByName('man').getComponent(cc.Animation);
+        this.node.setPosition(this.man_posi.right, this.node.y, this.node.z);
+        this.node.scaleX = -Math.abs(this.node.scaleX);
+
+        let animation = this.getComponent(cc.Animation);
         animation.play('idle');
+
     }
 
     rip() {
-        this.activeMan.getChildByName('man').active = false;
-        this.activeMan.getChildByName('rip').active = true;
+        this.ripStone.setPosition(this.node.position.x, this.ripStone.position.y);
+        this.ripStone.active = true;
+        this.node.active = false;
+
+        SoundController.instance.playTimberRip();
     }
 
     onLeftClick() {
-
-        // let animation = this.activeMan.getChildByName('man').getComponent(cc.Animation);
-        // let animName = this.isLeft ? 'man_left' : 'man_right';
-        // if (!animation.getAnimationState(animName).isPlaying) {
-        //     if (!this.isLeft) {
-        //         this.moveLeft();
-        //     }
-        //     this.cutTree();
-        // }
-
-
         if (!this.isLeft) {
             this.moveLeft();
         }
@@ -85,16 +74,6 @@ export default class TimberMan extends cc.Component {
     }
 
     onRightClick() {
-        // let animation = this.activeMan.getChildByName('man').getComponent(cc.Animation);
-        // let animName = this.isLeft ? 'man_left' : 'man_right';
-        // if (!animation.getAnimationState(animName).isPlaying) {
-        //     if (this.isLeft) {
-        //         this.moveRight();
-        //     }
-        //     this.cutTree();
-        // }
-
-
         if (this.isLeft) {
             this.moveRight();
         }

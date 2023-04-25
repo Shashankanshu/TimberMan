@@ -12,15 +12,15 @@
       "scaleY": [
         {
           "frame": 0,
-          "value": 0.98
+          "value": 1.5
         },
         {
           "frame": 0.5,
-          "value": 1
+          "value": 1.45
         },
         {
           "frame": 1,
-          "value": 0.98
+          "value": 1.5
         }
       ]
     }

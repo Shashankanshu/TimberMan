@@ -43,7 +43,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 277,
+      "width": 276,
       "height": 103
     },
     "_anchorPoint": {
@@ -97,7 +97,7 @@
     "_prefab": {
       "__id__": 4
     },
-    "_opacity": 255,
+    "_opacity": 55,
     "_color": {
       "__type__": "cc.Color",
       "r": 255,
@@ -120,7 +120,7 @@
       "ctor": "Float64Array",
       "array": [
         131,
-        70,
+        20,
         0,
         0,
         0,
